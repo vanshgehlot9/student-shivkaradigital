@@ -209,7 +209,7 @@ export async function getAuditLogsForEntity(
             .limit(limit)
             .get();
 
-        return snapshot.docs.map(doc => ({
+        return snapshot.docs.map((doc: FirebaseFirestore.QueryDocumentSnapshot) => ({
             id: doc.id,
             ...doc.data(),
             timestamp: doc.data().timestamp?.toDate() || new Date()
@@ -235,7 +235,7 @@ export async function getRecentAuditLogs(limit: number = 100): Promise<AuditLog[
             .limit(limit)
             .get();
 
-        return snapshot.docs.map(doc => ({
+        return snapshot.docs.map((doc: FirebaseFirestore.QueryDocumentSnapshot) => ({
             id: doc.id,
             ...doc.data(),
             timestamp: doc.data().timestamp?.toDate() || new Date()

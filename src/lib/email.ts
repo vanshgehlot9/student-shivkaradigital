@@ -100,7 +100,7 @@ export async function sendInvoiceEmail(invoice: Invoice, clientEmail: string) {
             <th style="padding: 10px; border-bottom: 2px solid #eee;">Description</th>
             <th style="padding: 10px; border-bottom: 2px solid #eee; text-align: right;">Amount</th>
           </tr>
-          ${invoice.items.map((item) => `
+          ${invoice.items.map((item: { description: string; quantity: number; rate: number }) => `
             <tr>
               <td style="padding: 10px; border-bottom: 1px solid #eee;">
                 ${item.description}

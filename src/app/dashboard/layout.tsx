@@ -1,5 +1,7 @@
 import { redirect } from "next/navigation";
 import { Outfit } from "next/font/google";
+import Link from "next/link";
+import { Home, Layers, Zap, Trophy } from "lucide-react";
 import LiquidNavbar from "@/components/LiquidNavbar";
 import { Toaster } from "@/components/ui/toaster";
 

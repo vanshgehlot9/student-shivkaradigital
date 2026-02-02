@@ -8,8 +8,7 @@ import {
     CheckSquare,
     BookOpen,
     BarChart2,
-    Settings,
-    LogOut
+    Settings
 } from "lucide-react";
 
 const navItems = [
@@ -23,12 +22,12 @@ export default function Sidebar() {
     const pathname = usePathname();
 
     return (
-        <div className="w-64 h-screen border-r border-[#27272A] bg-[#09090B] flex flex-col fixed left-0 top-0">
+        <div className="w-64 h-screen border-r border-white/[0.08] bg-[#020204]/80 backdrop-blur-xl flex flex-col fixed left-0 top-0 z-50">
             {/* Logo Area */}
-            <div className="p-6 border-b border-[#27272A]">
-                <div className="flex items-center gap-2 font-bold text-white tracking-tight">
-                    <div className="w-6 h-6 bg-white rounded-sm flex items-center justify-center text-black text-xs font-black">S</div>
-                    <span>SHIVKARA</span>
+            <div className="p-6 border-b border-white/[0.08]">
+                <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold shadow-lg shadow-indigo-500/20">S</div>
+                    <span className="font-semibold text-white tracking-tight">Shivkara</span>
                 </div>
             </div>
 
@@ -41,13 +40,16 @@ export default function Sidebar() {
                             key={item.href}
                             href={item.href}
                             className={cn(
-                                "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
+                                "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 group relative overflow-hidden",
                                 isActive
-                                    ? "bg-white text-black"
-                                    : "text-[#A1A1AA] hover:text-white hover:bg-[#27272A]"
+                                    ? "text-white bg-white/[0.08]"
+                                    : "text-zinc-400 hover:text-white hover:bg-white/[0.04]"
                             )}
                         >
-                            <item.icon size={16} />
+                            {isActive && (
+                                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-4 bg-indigo-500 rounded-r-full shadow-[0_0_8px_rgba(99,102,241,0.5)]"></div>
+                            )}
+                            <item.icon size={18} className={cn("transition-colors", isActive ? "text-indigo-400" : "text-zinc-500 group-hover:text-zinc-300")} />
                             {item.name}
                         </Link>
                     )
@@ -55,16 +57,16 @@ export default function Sidebar() {
             </nav>
 
             {/* Footer / User Profile */}
-            <div className="p-4 border-t border-[#27272A]">
-                <div className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-[#27272A] cursor-pointer transition-colors group">
-                    <div className="w-8 h-8 rounded-full bg-[#27272A] border border-[#3F3F46] flex items-center justify-center text-xs font-medium text-white group-hover:bg-[#3F3F46]">
+            <div className="p-4 border-t border-white/[0.08] bg-black/20">
+                <div className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/[0.05] cursor-pointer transition-colors group">
+                    <div className="w-8 h-8 rounded-full bg-zinc-800 border border-white/10 flex items-center justify-center text-xs font-medium text-white group-hover:border-indigo-500/50 transition-colors">
                         VG
                     </div>
                     <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-white truncate">Vansh Gehlot</p>
-                        <p className="text-xs text-[#71717A] truncate">Student</p>
+                        <p className="text-sm font-medium text-white truncate group-hover:text-indigo-300 transition-colors">Vansh Gehlot</p>
+                        <p className="text-xs text-zinc-500 truncate">Student Account</p>
                     </div>
-                    <Settings size={14} className="text-[#71717A] group-hover:text-white" />
+                    <Settings size={14} className="text-zinc-600 group-hover:text-white transition-colors" />
                 </div>
             </div>
         </div>

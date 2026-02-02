@@ -1,26 +1,19 @@
 import { redirect } from "next/navigation";
-import Link from "next/link";
-import {
-    Home,
-    Layers,
-    Trophy,
-    Settings,
-    LogOut,
-    Target,
-    Zap
-} from "lucide-react";
+import { Outfit } from "next/font/google";
+import LiquidNavbar from "@/components/LiquidNavbar";
+import { Toaster } from "@/components/ui/toaster";
 
-export default function StudentLayout({ children }: { children: React.ReactNode }) {
-    // Client-side authentication check would go here or via wrapper
+const outfit = Outfit({ subsets: ["latin"] });
 
+export default function DashboardLayout({
+    children,
+}: {
+    children: React.ReactNode;
+}) {
     return (
-        <div className="relative min-h-screen bg-black text-white font-sans selection:bg-orange-500/30 overflow-hidden">
-
-            {/* Global Background Effects (Liquid Glass) */}
+        <div className={`min-h-screen bg-[#030303] text-white selection:bg-[#FF4D00] selection:text-white overflow-x-hidden ${outfit.className}`}>
+            {/* Background Layers */}
             <div className="fixed inset-0 pointer-events-none z-0">
-                {/* Grid */}
-                <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.05]" />
-
                 {/* Moving Orbs */}
                 <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-zinc-900/40 rounded-full blur-[120px] animate-pulse" />
                 <div className="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-orange-900/10 rounded-full blur-[100px]" />

@@ -1,93 +1,96 @@
 "use client";
 
 import React from "react";
-import { Link as LinkIcon, ChevronRight, Filter } from "lucide-react";
+import { Filter, ChevronRight, Lock } from "lucide-react";
+import { Card } from "@/components/ui/Card";
 
 export default function AssignmentsPage() {
     return (
-        <div className="space-y-6">
-            <div className="flex items-center justify-between pb-4 border-b border-[#27272A]">
+        <div className="space-y-8 animate-in fade-in duration-500">
+            <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-semibold text-white tracking-tight">Assignments</h1>
-                    <p className="text-[#A1A1AA] text-sm mt-1">Manage and submit your bootcamp tasks.</p>
+                    <h1 className="text-2xl font-bold text-white tracking-tight">Mission Log</h1>
+                    <p className="text-zinc-400 text-sm mt-1">Manage current operations and submissions.</p>
                 </div>
-                <div className="flex gap-2">
-                    <button className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-[#18181B] border border-[#27272A] text-xs text-[#A1A1AA] hover:text-white transition-colors">
-                        <Filter size={14} /> Filter
+                <div className="flex gap-3">
+                    <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/[0.05] border border-white/[0.08] text-xs text-zinc-300 hover:text-white hover:bg-white/[0.1] transition-colors font-medium">
+                        <Filter size={14} /> Filter View
                     </button>
-                    <button className="px-3 py-1.5 rounded-md bg-white text-black text-xs font-medium hover:bg-[#E4E4E7] transition-colors">
+                    <button className="px-4 py-2 rounded-lg bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-500 transition-colors shadow-lg shadow-indigo-500/20">
                         New Submission
                     </button>
                 </div>
             </div>
 
-            {/* Assignments Table */}
-            <div className="w-full border border-[#27272A] rounded-lg overflow-hidden bg-[#09090B]">
+            {/* Premium Table Container */}
+            <Card className="overflow-hidden">
                 <table className="w-full text-left text-sm">
-                    <thead className="bg-[#18181B] border-b border-[#27272A] text-[#A1A1AA]">
+                    <thead className="bg-white/[0.02] border-b border-white/[0.05] text-zinc-500 font-medium text-xs uppercase tracking-wider">
                         <tr>
-                            <th className="px-6 py-3 font-medium">Assignment</th>
-                            <th className="px-6 py-3 font-medium">Status</th>
-                            <th className="px-6 py-3 font-medium">Due Date</th>
-                            <th className="px-6 py-3 font-medium">Action</th>
+                            <th className="px-8 py-4">Operation</th>
+                            <th className="px-8 py-4">Status</th>
+                            <th className="px-8 py-4">Timeline</th>
+                            <th className="px-8 py-4">Action</th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#27272A]">
-                        {/* Row 1 */}
-                        <tr className="hover:bg-[#18181B]/50 transition-colors group">
-                            <td className="px-6 py-4">
-                                <div className="font-medium text-white">Landing Page V1</div>
-                                <div className="text-xs text-[#71717A] mt-0.5">Replicate Saasify using auto-layout.</div>
+                    <tbody className="divide-y divide-white/[0.05]">
+                        {/* High Priority Row */}
+                        <tr className="hover:bg-white/[0.02] transition-colors group cursor-pointer">
+                            <td className="px-8 py-5">
+                                <div className="font-semibold text-white group-hover:text-indigo-400 transition-colors">Landing Page V1</div>
+                                <div className="text-xs text-zinc-500 mt-1">Clone Saasify architecture.</div>
                             </td>
-                            <td className="px-6 py-4">
-                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-[#7F1D1D]/20 text-[#F87171] border border-[#7F1D1D]/30">
-                                    High Priority
+                            <td className="px-8 py-5">
+                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 shadow-[0_0_10px_rgba(99,102,241,0.2)]">
+                                    ACTIVE MISSION
                                 </span>
                             </td>
-                            <td className="px-6 py-4 text-[#A1A1AA]">Today, 5:00 PM</td>
-                            <td className="px-6 py-4">
-                                <button className="text-white hover:underline text-xs flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    Submit <ChevronRight size={14} />
+                            <td className="px-8 py-5 text-zinc-400 font-mono text-xs">Due: 05:00 PM</td>
+                            <td className="px-8 py-5">
+                                <button className="text-indigo-400 hover:text-white text-xs font-medium flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all translate-x-[-10px] group-hover:translate-x-0">
+                                    Proceed <ChevronRight size={14} />
                                 </button>
                             </td>
                         </tr>
 
-                        {/* Row 2 */}
-                        <tr className="hover:bg-[#18181B]/50 transition-colors group">
-                            <td className="px-6 py-4">
-                                <div className="font-medium text-white">Figma Basics</div>
-                                <div className="text-xs text-[#71717A] mt-0.5">Intro to frames and constraints.</div>
+                        {/* Completed Row */}
+                        <tr className="hover:bg-white/[0.02] transition-colors group">
+                            <td className="px-8 py-5">
+                                <div className="font-medium text-zinc-300">Figma Basics</div>
+                                <div className="text-xs text-zinc-600 mt-1">Frames & Constraints.</div>
                             </td>
-                            <td className="px-6 py-4">
-                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-[#064E3B]/20 text-[#34D399] border border-[#064E3B]/30">
-                                    Completed
+                            <td className="px-8 py-5">
+                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+                                    COMPLETED
                                 </span>
                             </td>
-                            <td className="px-6 py-4 text-[#A1A1AA]">Jan 28, 2026</td>
-                            <td className="px-6 py-4">
-                                <span className="text-[#A1A1AA] text-xs">Grade: A</span>
+                            <td className="px-8 py-5 text-zinc-600 font-mono text-xs">Jan 28, 2026</td>
+                            <td className="px-8 py-5">
+                                <span className="text-emerald-500 text-xs font-bold">Grade: 98/100</span>
                             </td>
                         </tr>
 
-                        {/* Row 3 */}
-                        <tr className="hover:bg-[#18181B]/50 transition-colors group">
-                            <td className="px-6 py-4">
-                                <div className="font-medium text-white">Design Systems I</div>
-                                <div className="text-xs text-[#71717A] mt-0.5">Atomic design principles.</div>
+                        {/* Locked Row */}
+                        <tr className="bg-black/20 hover:bg-black/30 transition-colors group">
+                            <td className="px-8 py-5 opacity-50">
+                                <div className="font-medium text-zinc-500 flex items-center gap-2">
+                                    Design Systems I <Lock size={12} />
+                                </div>
+                                <div className="text-xs text-zinc-700 mt-1">Atomic Principles.</div>
                             </td>
-                            <td className="px-6 py-4">
-                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-[#18181B] text-[#A1A1AA] border border-[#27272A]">
-                                    Locked
+                            <td className="px-8 py-5">
+                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-zinc-800 text-zinc-500 border border-zinc-700">
+                                    LOCKED
                                 </span>
                             </td>
-                            <td className="px-6 py-4 text-[#A1A1AA]">Feb 05, 2026</td>
-                            <td className="px-6 py-4">
-                                <span className="text-[#52525B] text-xs">Unlock required</span>
+                            <td className="px-8 py-5 text-zinc-700 font-mono text-xs">Feb 05, 2026</td>
+                            <td className="px-8 py-5">
+                                <span className="text-zinc-700 text-xs font-mono uppercase tracking-widest">Encrypted</span>
                             </td>
                         </tr>
                     </tbody>
                 </table>
-            </div>
+            </Card>
         </div>
     );
 }

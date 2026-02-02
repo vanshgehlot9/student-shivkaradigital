@@ -1,91 +1,92 @@
 "use client";
 
 import React from "react";
-import HoloCard from "@/components/ui/HoloCard";
-import GlitchText from "@/components/ui/GlitchText";
-import { Link as LinkIcon, Lock, Globe, Clock, ChevronRight } from "lucide-react";
+import { Link as LinkIcon, ChevronRight, Filter } from "lucide-react";
 
 export default function AssignmentsPage() {
     return (
-        <div className="space-y-10">
-            <div className="flex items-center justify-between">
+        <div className="space-y-6">
+            <div className="flex items-center justify-between pb-4 border-b border-[#27272A]">
                 <div>
-                    <GlitchText text="TACTICAL MAP" className="text-4xl font-black text-white tracking-widest" />
-                    <p className="text-gray-500 text-xs font-mono mt-1">SELECT MISSION TO ENGAGE</p>
+                    <h1 className="text-2xl font-semibold text-white tracking-tight">Assignments</h1>
+                    <p className="text-[#A1A1AA] text-sm mt-1">Manage and submit your bootcamp tasks.</p>
                 </div>
-                <div className="px-3 py-1 bg-white/5 rounded border border-white/10 text-[10px] font-mono uppercase">
-                    Phase: <span className="text-[#FF3D00]">Infiltration</span>
+                <div className="flex gap-2">
+                    <button className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-[#18181B] border border-[#27272A] text-xs text-[#A1A1AA] hover:text-white transition-colors">
+                        <Filter size={14} /> Filter
+                    </button>
+                    <button className="px-3 py-1.5 rounded-md bg-white text-black text-xs font-medium hover:bg-[#E4E4E7] transition-colors">
+                        New Submission
+                    </button>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Assignments Table */}
+            <div className="w-full border border-[#27272A] rounded-lg overflow-hidden bg-[#09090B]">
+                <table className="w-full text-left text-sm">
+                    <thead className="bg-[#18181B] border-b border-[#27272A] text-[#A1A1AA]">
+                        <tr>
+                            <th className="px-6 py-3 font-medium">Assignment</th>
+                            <th className="px-6 py-3 font-medium">Status</th>
+                            <th className="px-6 py-3 font-medium">Due Date</th>
+                            <th className="px-6 py-3 font-medium">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[#27272A]">
+                        {/* Row 1 */}
+                        <tr className="hover:bg-[#18181B]/50 transition-colors group">
+                            <td className="px-6 py-4">
+                                <div className="font-medium text-white">Landing Page V1</div>
+                                <div className="text-xs text-[#71717A] mt-0.5">Replicate Saasify using auto-layout.</div>
+                            </td>
+                            <td className="px-6 py-4">
+                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-[#7F1D1D]/20 text-[#F87171] border border-[#7F1D1D]/30">
+                                    High Priority
+                                </span>
+                            </td>
+                            <td className="px-6 py-4 text-[#A1A1AA]">Today, 5:00 PM</td>
+                            <td className="px-6 py-4">
+                                <button className="text-white hover:underline text-xs flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    Submit <ChevronRight size={14} />
+                                </button>
+                            </td>
+                        </tr>
 
-                {/* Active Mission */}
-                <HoloCard className="border-[#00F3FF]/30 ring-1 ring-[#00F3FF]/20 group">
-                    <div className="absolute -top-3 left-4 bg-[#00F3FF] text-black text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">
-                        Active Operation
-                    </div>
+                        {/* Row 2 */}
+                        <tr className="hover:bg-[#18181B]/50 transition-colors group">
+                            <td className="px-6 py-4">
+                                <div className="font-medium text-white">Figma Basics</div>
+                                <div className="text-xs text-[#71717A] mt-0.5">Intro to frames and constraints.</div>
+                            </td>
+                            <td className="px-6 py-4">
+                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-[#064E3B]/20 text-[#34D399] border border-[#064E3B]/30">
+                                    Completed
+                                </span>
+                            </td>
+                            <td className="px-6 py-4 text-[#A1A1AA]">Jan 28, 2026</td>
+                            <td className="px-6 py-4">
+                                <span className="text-[#A1A1AA] text-xs">Grade: A</span>
+                            </td>
+                        </tr>
 
-                    <div className="mt-2 mb-6">
-                        <h2 className="text-2xl font-bold text-white group-hover:text-[#00F3FF] transition-colors">Landing Page V1</h2>
-                        <p className="text-xs text-gray-400 mt-2 leading-relaxed">
-                            Objective: Clone Saasify. <br />
-                            Constraints: Autolayout required.
-                        </p>
-                    </div>
-
-                    <div className="space-y-3">
-                        <div className="flex gap-2">
-                            <input
-                                type="text"
-                                placeholder="Figma URL..."
-                                className="w-full bg-black/40 border border-white/10 rounded px-3 py-2 text-xs text-white focus:border-[#00F3FF] outline-none font-mono"
-                            />
-                            <button className="bg-[#00F3FF] text-black p-2 rounded hover:bg-white transition-colors">
-                                <ChevronRight size={16} />
-                            </button>
-                        </div>
-                        <div className="flex justify-between items-center text-[10px] text-gray-500 font-mono">
-                            <span className="flex items-center gap-1"><Clock size={10} /> 02:22:15</span>
-                            <span className="flex items-center gap-1"><Globe size={10} /> Public View</span>
-                        </div>
-                    </div>
-                </HoloCard>
-
-                {/* Locked Mission */}
-                <HoloCard className="opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all">
-                    <div className="flex justify-between items-center mb-4">
-                        <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">Locked</span>
-                        <Lock size={14} className="text-gray-600" />
-                    </div>
-
-                    <h2 className="text-xl font-bold text-gray-300 mb-2">Design Systems I</h2>
-                    <p className="text-xs text-gray-500 mt-2 mb-6">
-                        Clear previous objectives to unlock this region.
-                    </p>
-
-                    <div className="w-full h-8 bg-white/5 rounded flex items-center justify-center text-[10px] font-mono text-gray-600 border border-white/5">
-                        ENCRYPTED
-                    </div>
-                </HoloCard>
-
-                {/* Locked Mission */}
-                <HoloCard className="opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all">
-                    <div className="flex justify-between items-center mb-4">
-                        <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">Locked</span>
-                        <Lock size={14} className="text-gray-600" />
-                    </div>
-
-                    <h2 className="text-xl font-bold text-gray-300 mb-2">Prototyping</h2>
-                    <p className="text-xs text-gray-500 mt-2 mb-6">
-                        Requires Level 3 Clearance.
-                    </p>
-
-                    <div className="w-full h-8 bg-white/5 rounded flex items-center justify-center text-[10px] font-mono text-gray-600 border border-white/5">
-                        ENCRYPTED
-                    </div>
-                </HoloCard>
-
+                        {/* Row 3 */}
+                        <tr className="hover:bg-[#18181B]/50 transition-colors group">
+                            <td className="px-6 py-4">
+                                <div className="font-medium text-white">Design Systems I</div>
+                                <div className="text-xs text-[#71717A] mt-0.5">Atomic design principles.</div>
+                            </td>
+                            <td className="px-6 py-4">
+                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-[#18181B] text-[#A1A1AA] border border-[#27272A]">
+                                    Locked
+                                </span>
+                            </td>
+                            <td className="px-6 py-4 text-[#A1A1AA]">Feb 05, 2026</td>
+                            <td className="px-6 py-4">
+                                <span className="text-[#52525B] text-xs">Unlock required</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     );

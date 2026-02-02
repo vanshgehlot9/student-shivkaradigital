@@ -1,93 +1,133 @@
 "use client";
 
 import React from "react";
-import HoloCard from "@/components/ui/HoloCard";
-import GlitchText from "@/components/ui/GlitchText";
-import { Zap, Terminal, Activity, Crosshair, Wifi } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Activity, BookOpen, CheckSquare, Clock } from "lucide-react";
 
 export default function StudentDashboard() {
     return (
-        <div className="space-y-8 font-mono">
+        <div className="space-y-8">
 
-            {/* HUD Header */}
-            <div className="flex justify-between items-end border-b border-white/10 pb-4">
+            {/* Header */}
+            <div className="flex justify-between items-center">
                 <div>
-                    <div className="flex items-center gap-2 text-[#00F3FF] text-xs mb-1">
-                        <Wifi size={12} className="animate-pulse" />
-                        <span>SIGNAL_STRONG</span>
-                    </div>
-                    <GlitchText text="PILOT OVERVIEW" className="text-4xl md:text-6xl font-black text-white tracking-widest" />
+                    <h1 className="text-2xl font-semibold text-white tracking-tight">Overview</h1>
+                    <p className="text-[#A1A1AA] text-sm mt-1">Welcome back, Vansh. Here's what's happening today.</p>
                 </div>
-                <div className="text-right hidden md:block opacity-50">
-                    <div className="text-xs">COORDINATES</div>
-                    <div className="text-xs text-[#FF3D00]">45.22, 108.99</div>
+                <div className="text-sm text-[#71717A] bg-[#18181B] px-3 py-1 rounded border border-[#27272A]">
+                    Feb 02, 2026
                 </div>
             </div>
 
-            {/* Widget Grid - Draggable Concept */}
-            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 auto-rows-[minmax(180px,auto)]">
+            {/* Metrics Row */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <MetricCard
+                    title="Assignments Due"
+                    value="2"
+                    sub="1 High Priority"
+                    icon={CheckSquare}
+                />
+                <MetricCard
+                    title="Bootcamp Progress"
+                    value="12%"
+                    sub="Foundations Phase"
+                    icon={BookOpen}
+                />
+                <MetricCard
+                    title="Current Streak"
+                    value="5 Days"
+                    sub="Keep it up!"
+                    icon={Activity}
+                />
+            </div>
 
-                {/* Large Main Status */}
-                <div className="md:col-span-2 lg:col-span-2 row-span-2">
-                    <HoloCard className="h-full flex flex-col justify-between overflow-hidden relative">
-                        <div className="absolute top-0 right-0 p-4 opacity-20"><Crosshair size={48} /></div>
+            {/* Main Content Split */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
 
-                        <div>
-                            <h3 className="text-gray-400 text-sm uppercase tracking-widest mb-2">Current Objective</h3>
-                            <p className="text-3xl font-bold text-white mb-4 leading-tight">
-                                Deconstruct the <span className="text-[#00F3FF]">"Saasify"</span> Landing Page Architecture.
+                {/* Left: Active Tasks */}
+                <div className="md:col-span-2 space-y-4">
+                    <h2 className="text-lg font-medium text-white">Priority Tasks</h2>
+
+                    <Card className="bg-[#09090B] border-[#27272A]">
+                        <CardHeader className="border-b border-[#27272A] p-4">
+                            <div className="flex justify-between items-center">
+                                <span className="text-sm font-medium text-white">Landing Page V1</span>
+                                <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-[#7F1D1D]/20 text-[#F87171] border border-[#7F1D1D]/30 uppercase">High Priority</span>
+                            </div>
+                        </CardHeader>
+                        <CardContent className="p-4">
+                            <p className="text-sm text-[#A1A1AA] mb-4 leading-relaxed">
+                                Replicate the SaaS landing page structure using auto-layout. Ensure all constraints are set correctly for responsiveness.
                             </p>
-                        </div>
+                            <div className="flex items-center gap-4 text-xs text-[#71717A]">
+                                <span className="flex items-center gap-1"><Clock size={12} /> Due Today at 5pm</span>
+                            </div>
+                        </CardContent>
+                    </Card>
 
-                        <div className="space-y-4">
-                            <div className="w-full h-1 bg-gray-800 rounded-full overflow-hidden">
-                                <div className="h-full w-3/4 bg-[#00F3FF] shadow-[0_0_10px_#00F3FF]"></div>
+                    <Card className="bg-[#09090B] border-[#27272A] opacity-75">
+                        <CardHeader className="border-b border-[#27272A] p-4">
+                            <div className="flex justify-between items-center">
+                                <span className="text-sm font-medium text-white">Component Library Init</span>
+                                <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-[#18181B] text-[#A1A1AA] border border-[#27272A] uppercase">Upcoming</span>
                             </div>
-                            <div className="flex justify-between text-xs text-gray-500">
-                                <span>Progress: 75%</span>
-                                <span>T-Minus 2h</span>
-                            </div>
-                        </div>
-                    </HoloCard>
+                        </CardHeader>
+                        <CardContent className="p-4">
+                            <p className="text-sm text-[#A1A1AA]">
+                                Set up the basic folder structure for your design system components.
+                            </p>
+                        </CardContent>
+                    </Card>
+
                 </div>
 
-                {/* Stat : XP */}
-                <HoloCard className="flex flex-col items-center justify-center text-center">
-                    <Zap size={32} className="text-[#FF3D00] mb-2" />
-                    <div className="text-4xl font-bold text-white">450</div>
-                    <div className="text-[10px] text-gray-500 uppercase tracking-widest mt-1">XP ACQUIRED</div>
-                </HoloCard>
-
-                {/* Stat : Rank */}
-                <HoloCard className="flex flex-col items-center justify-center text-center">
-                    <Activity size={32} className="text-[#00F3FF] mb-2" />
-                    <div className="text-4xl font-bold text-white">#04</div>
-                    <div className="text-[10px] text-gray-500 uppercase tracking-widest mt-1">COHORT RANK</div>
-                </HoloCard>
-
-                {/* Data Stream */}
-                <div className="md:col-span-2 row-span-1">
-                    <HoloCard className="h-full">
-                        <div className="flex items-center gap-2 mb-4 border-b border-white/5 pb-2">
-                            <Terminal size={14} className="text-gray-500" />
-                            <span className="text-xs text-gray-500 uppercase">System Logs</span>
-                        </div>
-                        <div className="space-y-2 font-mono text-xs max-h-[100px] overflow-y-auto custom-scrollbar">
-                            <LogEntry time="10:42:01" msg="Repo access granted: student-shivkara" />
-                            <LogEntry time="10:40:22" msg="Module 'Figma' loaded" highlight />
-                            <LogEntry time="09:15:00" msg="Session joined: Foundations" />
-                            <LogEntry time="09:00:00" msg="System boot sequence complete" />
-                        </div>
-                    </HoloCard>
+                {/* Right: Recent Activity / Feed */}
+                <div className="space-y-4">
+                    <h2 className="text-lg font-medium text-white">Recent Activity</h2>
+                    <div className="space-y-6 pt-2">
+                        <ActivityItem
+                            text="Assignments 'Figma Basics' graded"
+                            time="2h ago"
+                        />
+                        <ActivityItem
+                            text="New resource added: 'Auto Layout Guide'"
+                            time="5h ago"
+                        />
+                        <ActivityItem
+                            text="Joined session 'Design Systems I'"
+                            time="Yesterday"
+                        />
+                    </div>
                 </div>
+
             </div>
         </div>
     );
 }
 
-const LogEntry = ({ time, msg, highlight }: { time: string, msg: string, highlight?: boolean }) => (
-    <div className={`flex gap-3 ${highlight ? 'text-[#00F3FF]' : 'text-gray-400'}`}>
-        <span className="opacity-50">[{time}]</span>
-        <span>{msg}</span>
-    </div>
-)
+function MetricCard({ title, value, sub, icon: Icon }: any) {
+    return (
+        <Card className="bg-[#09090B] border-[#27272A]">
+            <CardContent className="p-6">
+                <div className="flex justify-between items-start mb-4">
+                    <span className="text-sm font-medium text-[#A1A1AA]">{title}</span>
+                    <Icon size={16} className="text-[#52525B]" />
+                </div>
+                <div className="text-3xl font-bold text-white tracking-tight">{value}</div>
+                <p className="text-xs text-[#52525B] mt-1">{sub}</p>
+            </CardContent>
+        </Card>
+    )
+}
+
+function ActivityItem({ text, time }: { text: string, time: string }) {
+    return (
+        <div className="flex gap-4">
+            <div className="w-1.5 h-1.5 rounded-full bg-[#27272A] mt-2 flex-shrink-0" />
+            <div>
+                <p className="text-sm text-[#E4E4E7]">{text}</p>
+                <p className="text-xs text-[#52525B]">{time}</p>
+            </div>
+        </div>
+    )
+}

@@ -1,60 +1,54 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Fingerprint, ScanEye } from "lucide-react";
-import GlitchText from "@/components/ui/GlitchText";
-import { motion, AnimatePresence } from "framer-motion";
+import { ArrowRight } from "lucide-react";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/Card";
 
 export default function Home() {
-  const [unlocked, setUnlocked] = useState(false);
-
   return (
-    <div className="min-h-screen flex items-center justify-center relative overflow-hidden font-sans">
+    <div className="min-h-screen bg-[#09090B] flex items-center justify-center p-4 font-sans text-white">
 
-      <AnimatePresence>
-        {!unlocked ? (
-          <motion.div
-            exit={{ opacity: 0, scale: 1.5, filter: "blur(20px)" }}
-            className="text-center z-10 cursor-pointer group"
-            onClick={() => setUnlocked(true)}
-          >
-            <div className="relative w-32 h-32 mx-auto mb-8 flex items-center justify-center">
-              <div className="absolute inset-0 rounded-full border-2 border-[#00F3FF] opacity-30 animate-ping"></div>
-              <div className="absolute inset-0 rounded-full border border-white/20 group-hover:border-[#00F3FF] transition-colors duration-500"></div>
-              <Fingerprint size={64} className="text-white group-hover:text-[#00F3FF] transition-colors duration-300" />
+      <div className="w-full max-w-md space-y-8">
+        <div className="text-center">
+          <div className="inline-flex items-center justify-center w-10 h-10 rounded-md bg-white text-[#09090B] font-black text-xl mb-6">S</div>
+          <h1 className="text-2xl font-bold tracking-tight text-white">Sign in to Shivkara Student</h1>
+          <p className="mt-2 text-sm text-[#A1A1AA]">
+            Welcome back. Please enter your details.
+          </p>
+        </div>
+
+        <Card className="bg-[#09090B] border-[#27272A] shadow-none">
+          <CardContent className="pt-6 space-y-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-[#E4E4E7]">Email</label>
+              <input
+                type="email"
+                placeholder="student@shivkara.com"
+                className="w-full h-10 px-3 rounded-md bg-[#18181B] border border-[#27272A] text-sm text-white placeholder:text-[#52525B] focus:outline-none focus:ring-2 focus:ring-white/20 transition-all shadow-sm"
+              />
             </div>
-
-            <h1 className="text-3xl font-bold text-white tracking-[0.5em] mb-2 uppercase">Identify</h1>
-            <p className="text-[#00F3FF] text-xs font-mono animate-pulse">Touch to Authenticate</p>
-          </motion.div>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "circOut" }}
-            className="relative z-20 w-full max-w-lg"
-          >
-            <div className="glass-holo p-12 rounded-3xl text-center border-t border-t-[#00F3FF]/50 relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#00F3FF] to-transparent animate-scan"></div>
-
-              <h2 className="text-4xl font-black text-white mb-2">ACCESS GRANTED</h2>
-              <GlitchText text="WELCOME RECRUIT" className="text-xl text-gray-400 font-mono mb-12 block" />
-
-              <Link href="/dashboard" className="block w-full">
-                <button className="w-full py-4 bg-[#00F3FF] text-black font-bold text-sm tracking-widest uppercase rounded hover:bg-white transition-colors flex items-center justify-center gap-3">
-                  Enter Neural Hub <ArrowRight size={18} />
-                </button>
-              </Link>
-
-              <div className="mt-8 flex justify-center gap-4 text-[10px] text-gray-600 font-mono uppercase">
-                <span className="flex items-center gap-1"><ScanEye size={12} /> Retina Verified</span>
-                <span className="flex items-center gap-1">Encryption: AES-256</span>
-              </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-[#E4E4E7]">Password</label>
+              <input
+                type="password"
+                className="w-full h-10 px-3 rounded-md bg-[#18181B] border border-[#27272A] text-sm text-white focus:outline-none focus:ring-2 focus:ring-white/20 transition-all shadow-sm"
+              />
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </CardContent>
+
+          <CardFooter className="pt-2 flex flex-col gap-4">
+            <Link href="/dashboard" className="w-full">
+              <button className="w-full h-10 bg-white text-[#09090B] font-medium text-sm rounded-md hover:bg-[#E4E4E7] transition-colors flex items-center justify-center gap-2">
+                Sign In <ArrowRight size={16} />
+              </button>
+            </Link>
+            <p className="text-center text-xs text-[#52525B]">
+              Don't have an account? <span className="text-white hover:underline cursor-pointer">Contact Faculty</span>
+            </p>
+          </CardFooter>
+        </Card>
+
+      </div>
 
     </div>
   );

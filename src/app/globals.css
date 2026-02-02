@@ -71,70 +71,60 @@ body {
     backdrop-filter: blur(10px);
   }
 
-  /* Text Effects */
+  .glass-holo {
+    @apply backdrop-blur-[20px] bg-white/[0.02] border border-white/[0.05];
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.05),
+      0 0 20px -5px rgba(0, 243, 255, 0.1);
+  }
+
   .text-glow {
-    text-shadow: 0 0 20px rgba(255, 77, 0, 0.6);
+    text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
   }
 
-  .text-glow-blue {
-    text-shadow: 0 0 20px rgba(0, 240, 255, 0.6);
+  .text-plasma {
+    text-shadow: 0 0 10px rgba(255, 61, 0, 0.5);
   }
 
-  .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-gray-500;
+  .liquid-border {
+    @apply relative overflow-hidden;
   }
 
-  .text-gradient-accent {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#FF4D00] to-[#FF8A00];
-  }
-
-  /* Liquid Gradient Animation */
-  .liquid-gradient {
-    background: linear-gradient(-45deg,
-        rgba(255, 77, 0, 0.1),
-        rgba(0, 0, 0, 0),
-        rgba(0, 240, 255, 0.05),
-        rgba(0, 0, 0, 0));
-    background-size: 400% 400%;
-    animation: liquid 15s ease infinite;
+  .liquid-border::before {
+    content: '';
+    @apply absolute inset-0 pointer-events-none;
+    background: linear-gradient(90deg, transparent, rgba(0, 243, 255, 0.5), transparent);
+    transform: translateX(-100%);
+    animation: liquid-shine 3s infinite;
   }
 }
 
-/* Animations */
-@keyframes liquid {
+@keyframes liquid-shine {
   0% {
-    background-position: 0% 50%;
+    transform: translateX(-100%);
   }
 
-  50% {
-    background-position: 100% 50%;
-  }
-
+  20%,
   100% {
-    background-position: 0% 50%;
+    transform: translateX(100%);
   }
 }
 
-@keyframes float {
-
-  0%,
-  100% {
-    transform: translateY(0px);
+@keyframes drift {
+  0% {
+    transform: translate(0, 0);
   }
 
   50% {
-    transform: translateY(-10px);
+    transform: translate(10px, -10px);
   }
-}
 
-.animate-float {
-  animation: float 6s ease-in-out infinite;
+  100% {
+    transform: translate(0, 0);
+  }
 }
 
 @keyframes glitch {
-  0% {
-    transform: translate(0);
-  }
 
   20% {
     transform: translate(-2px, 2px);

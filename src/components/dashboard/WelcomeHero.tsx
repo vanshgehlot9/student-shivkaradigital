@@ -2,20 +2,67 @@
 
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { db } from "@/lib/firebase";
+import { collection, query, where, getDocs, limit } from "firebase/firestore";
+import { useAuth } from "@/context/AuthContext";
 
 export function WelcomeHero() {
     const [text, setText] = useState("");
-    const fullText = "READY TO EXECUTE, VANSH?";
+    const [userName, setUserName] = useState("OPERATIVE");
+    const { user } = useAuth();
+
+    // Fetch user name from database
+    useEffect(() => {
+        const fetchUserName = async () => {
+            if (!user) return;
+
+            try {
+                const userQuery = query(
+                    collection(db, "students"),
+                    where("uid", "==", user.uid),
+                    limit(1)
+                );
+                const snapshot = await getDocs(userQuery);
+
+                if (!snapshot.empty) {
+                    const data = snapshot.docs[0].data();
+                    const name = data.name || user.displayName || "OPERATIVE";
+                    // Get first name only and uppercase it
+                    const firstName = name.split(' ')[0].toUpperCase();
+                    setUserName(firstName);
+                } else if (user.displayName) {
+                    const firstName = user.displayName.split(' ')[0].toUpperCase();
+                    setUserName(firstName);
+                }
+            } catch (error) {
+                console.error("Error fetching user name:", error);
+            }
+        };
+
+        fetchUserName();
+    }, [user]);
+
+    // Dynamic greeting based on time of day
+    const getGreeting = () => {
+        const hour = new Date().getHours();
+        if (hour >= 5 && hour < 12) return "GOOD MORNING";
+        if (hour >= 12 && hour < 17) return "GOOD AFTERNOON";
+        if (hour >= 17 && hour < 21) return "GOOD EVENING";
+        return "READY TO EXECUTE";
+    };
+
+    const fullText = `${getGreeting()}, ${userName}!`;
 
     useEffect(() => {
         let i = 0;
+        setText(""); // Reset text when fullText changes
         const interval = setInterval(() => {
             setText(fullText.slice(0, i + 1));
             i++;
             if (i > fullText.length) clearInterval(interval);
         }, 50);
         return () => clearInterval(interval);
-    }, []);
+    }, [fullText]);
 
     return (
         <div className="relative mb-12 py-8 overflow-hidden">
@@ -34,3 +81,4 @@ export function WelcomeHero() {
         </div>
     );
 }
+

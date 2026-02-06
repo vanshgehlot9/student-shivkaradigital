@@ -4,7 +4,7 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 
-export type ProfileTab = "education" | "resume" | "links" | "skills";
+export type ProfileTab = "education" | "links";
 
 interface ProfileTabsProps {
     activeTab: ProfileTab;
@@ -13,9 +13,7 @@ interface ProfileTabsProps {
 
 const tabs: { id: ProfileTab; label: string }[] = [
     { id: "education", label: "Qualifications" },
-    { id: "resume", label: "Dossier / Resume" },
     { id: "links", label: "Net Links" },
-    { id: "skills", label: "Skill Matrix" },
 ];
 
 export function ProfileTabs({ activeTab, onTabChange }: ProfileTabsProps) {

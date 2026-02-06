@@ -82,6 +82,8 @@ const jsonLd = {
   }
 };
 
+import { AuthProvider } from "@/context/AuthContext";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -90,17 +92,19 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${outfit.variable} antialiased bg-black text-white`}
+        className={`${outfit.variable} antialiased bg-black text-white scanlines`}
       >
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
-        <Suspense fallback={null}>
-          <SiteOverlays />
-        </Suspense>
-        {children}
-        <Toaster />
+        <AuthProvider>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          />
+          <Suspense fallback={null}>
+            <SiteOverlays />
+          </Suspense>
+          {children}
+          <Toaster />
+        </AuthProvider>
       </body>
     </html>
   );

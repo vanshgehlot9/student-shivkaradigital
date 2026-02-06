@@ -1,96 +1,115 @@
 "use client";
 
-import React from "react";
-import { Filter, ChevronRight, Lock } from "lucide-react";
-import { Card } from "@/components/ui/Card";
+import React, { useState } from "react";
+import { AssignmentsHeader } from "@/components/assignments/AssignmentsHeader";
+import { SmartTabs } from "@/components/assignments/SmartTabs";
+import { AssignmentCard, AssignmentStatus, UrgencyLevel } from "@/components/assignments/AssignmentCard";
+import { motion, AnimatePresence } from "framer-motion";
+import { AlertCircle } from "lucide-react";
+
+import { AssignmentsService } from "@/services/assignments";
+import { Assignment } from "@/types/schema";
+import { format } from "date-fns";
 
 export default function AssignmentsPage() {
+    const [activeTab, setActiveTab] = useState<"active" | "completed">("active");
+    const [assignments, setAssignments] = useState<Assignment[]>([]);
+
+    // Simulate real data fetching
+    React.useEffect(() => {
+        // TODO: Get real batchId from AuthContext
+        const mockBatchId = "batch-2025-01";
+
+        const fetchAssignments = async () => {
+            const data = await AssignmentsService.getStudentAssignments(mockBatchId);
+            if (data.length > 0) {
+                setAssignments(data);
+            } else {
+                // If API returns empty (no connection yet), keep using mock data for demo purposes?
+                // Or better, let's inject some dummy data if API fails or returns nothing, to preserve the "demo" feel for now.
+                // Actually, let's try to stick to the "Real Functionality" request.
+                // If DB is empty, it should show empty state.
+                // But to test the UI, I'll inject a fallback if empty, or just rely on what I put in Firestore (which is nothing yet).
+                // Let's create a local mock fallback inside here if empty, just so the user sees SOMETHING.
+                // But the user asked to "remove mock data". So I should respect that.
+                // I will initialize state as empty array. If nothing in DB, show empty state.
+                setAssignments(data);
+            }
+        };
+
+        fetchAssignments();
+    }, []);
+
+    const activeAssignments = assignments.filter(d => d.status === "active" || d.status === "upcoming" || d.status === "overdue");
+    const completedAssignments = assignments.filter(d => d.status === "completed");
+
+    const displayedAssignments = activeTab === "active" ? activeAssignments : completedAssignments;
+
     return (
-        <div className="space-y-8 animate-in fade-in duration-500">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-2xl font-bold text-white tracking-tight">Mission Log</h1>
-                    <p className="text-zinc-400 text-sm mt-1">Manage current operations and submissions.</p>
-                </div>
-                <div className="flex gap-3">
-                    <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/[0.05] border border-white/[0.08] text-xs text-zinc-300 hover:text-white hover:bg-white/[0.1] transition-colors font-medium">
-                        <Filter size={14} /> Filter View
-                    </button>
-                    <button className="px-4 py-2 rounded-lg bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-500 transition-colors shadow-lg shadow-indigo-500/20">
-                        New Submission
-                    </button>
-                </div>
+        <div className="pb-24 min-h-screen">
+
+            {/* Contextual Header */}
+            <AssignmentsHeader />
+
+            {/* Controls Row */}
+            <div className="flex items-center justify-center lg:justify-start mb-12">
+                <SmartTabs
+                    activeTab={activeTab}
+                    onTabChange={setActiveTab}
+                    counts={{
+                        active: activeAssignments.length,
+                        completed: completedAssignments.length
+                    }}
+                />
             </div>
 
-            {/* Premium Table Container */}
-            <Card className="overflow-hidden">
-                <table className="w-full text-left text-sm">
-                    <thead className="bg-white/[0.02] border-b border-white/[0.05] text-zinc-500 font-medium text-xs uppercase tracking-wider">
-                        <tr>
-                            <th className="px-8 py-4">Operation</th>
-                            <th className="px-8 py-4">Status</th>
-                            <th className="px-8 py-4">Timeline</th>
-                            <th className="px-8 py-4">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-white/[0.05]">
-                        {/* High Priority Row */}
-                        <tr className="hover:bg-white/[0.02] transition-colors group cursor-pointer">
-                            <td className="px-8 py-5">
-                                <div className="font-semibold text-white group-hover:text-indigo-400 transition-colors">Landing Page V1</div>
-                                <div className="text-xs text-zinc-500 mt-1">Clone Saasify architecture.</div>
-                            </td>
-                            <td className="px-8 py-5">
-                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 shadow-[0_0_10px_rgba(99,102,241,0.2)]">
-                                    ACTIVE MISSION
-                                </span>
-                            </td>
-                            <td className="px-8 py-5 text-zinc-400 font-mono text-xs">Due: 05:00 PM</td>
-                            <td className="px-8 py-5">
-                                <button className="text-indigo-400 hover:text-white text-xs font-medium flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all translate-x-[-10px] group-hover:translate-x-0">
-                                    Proceed <ChevronRight size={14} />
-                                </button>
-                            </td>
-                        </tr>
+            {/* Main Grid with Staggered Entrance */}
+            <AnimatePresence mode="wait">
+                <motion.div
+                    key={activeTab}
+                    initial="hidden"
+                    animate="show"
+                    exit="hidden"
+                    variants={{
+                        hidden: {},
+                        show: {
+                            transition: {
+                                staggerChildren: 0.1
+                            }
+                        }
+                    }}
+                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+                >
+                    {displayedAssignments.map((assignment, index) => (
+                        <AssignmentCard
+                            key={assignment.id}
+                            index={index}
+                            title={assignment.title}
+                            subject={assignment.subject}
+                            status={assignment.status}
+                            deadline={format(assignment.deadline, "MMM dd, HH:mm")}
+                            duration={assignment.duration}
+                            urgency={assignment.urgency}
+                            startsIn={undefined} // Schema doesn't have startsIn yet, can compute if needed
+                        />
+                    ))}
+                </motion.div>
+            </AnimatePresence>
 
-                        {/* Completed Row */}
-                        <tr className="hover:bg-white/[0.02] transition-colors group">
-                            <td className="px-8 py-5">
-                                <div className="font-medium text-zinc-300">Figma Basics</div>
-                                <div className="text-xs text-zinc-600 mt-1">Frames & Constraints.</div>
-                            </td>
-                            <td className="px-8 py-5">
-                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
-                                    COMPLETED
-                                </span>
-                            </td>
-                            <td className="px-8 py-5 text-zinc-600 font-mono text-xs">Jan 28, 2026</td>
-                            <td className="px-8 py-5">
-                                <span className="text-emerald-500 text-xs font-bold">Grade: 98/100</span>
-                            </td>
-                        </tr>
-
-                        {/* Locked Row */}
-                        <tr className="bg-black/20 hover:bg-black/30 transition-colors group">
-                            <td className="px-8 py-5 opacity-50">
-                                <div className="font-medium text-zinc-500 flex items-center gap-2">
-                                    Design Systems I <Lock size={12} />
-                                </div>
-                                <div className="text-xs text-zinc-700 mt-1">Atomic Principles.</div>
-                            </td>
-                            <td className="px-8 py-5">
-                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-zinc-800 text-zinc-500 border border-zinc-700">
-                                    LOCKED
-                                </span>
-                            </td>
-                            <td className="px-8 py-5 text-zinc-700 font-mono text-xs">Feb 05, 2026</td>
-                            <td className="px-8 py-5">
-                                <span className="text-zinc-700 text-xs font-mono uppercase tracking-widest">Encrypted</span>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </Card>
+            {/* Empty State System Idle Visualization */}
+            {displayedAssignments.length === 0 && (
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="flex flex-col items-center justify-center py-32 border border-dashed border-white/10 rounded-2xl bg-white/[0.01]"
+                >
+                    <div className="w-16 h-16 rounded-full bg-zinc-900 flex items-center justify-center mb-4 border border-zinc-800">
+                        <AlertCircle className="text-zinc-600" />
+                    </div>
+                    <h3 className="text-white font-bold text-lg mb-1">System Idle</h3>
+                    <p className="text-zinc-500 text-sm font-mono">No missions pending in this sector.</p>
+                </motion.div>
+            )}
         </div>
     );
 }

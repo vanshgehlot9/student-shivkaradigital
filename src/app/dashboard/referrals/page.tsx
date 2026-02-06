@@ -1,12 +1,49 @@
-import React from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { Share2, Lock, Unlock, Copy, Zap, Gift } from "lucide-react";
+import { db } from "@/lib/firebase";
+import { collection, query, where, getDocs, limit } from "firebase/firestore";
 
-// Mock Data
-const REFERRAL_COUNT = 12;
-const PROGRESS_PERCENT = 40; // towards next tier
+import { useAuth } from "@/context/AuthContext";
 
 export default function ReferralsPage() {
+    const [referralCount, setReferralCount] = useState(0);
+    const [inviteLink, setInviteLink] = useState("shivkara.com/invite/loading...");
+    const { user } = useAuth();
+
+    useEffect(() => {
+        const fetchReferralData = async () => {
+            if (!user) return;
+            try {
+                const userId = user.uid;
+                const userQuery = query(
+                    collection(db, "students"),
+                    where("uid", "==", userId),
+                    limit(1)
+                );
+                const snapshot = await getDocs(userQuery);
+
+                if (!snapshot.empty) {
+                    const data = snapshot.docs[0].data();
+                    setReferralCount(data.referrals?.count || 0);
+                    setInviteLink(`shivkara.com/invite/${data.referralCode || snapshot.docs[0].id}`);
+                }
+            } catch (error) {
+                console.error("Error fetching referral data:", error);
+            }
+        };
+
+        if (user) {
+            fetchReferralData();
+        }
+    }, [user]);
+
+    const progressPercent = Math.min((referralCount / 25) * 100, 100);
+    const nextTierReq = referralCount < 10 ? 10 : referralCount < 15 ? 15 : 25;
+    const remaining = nextTierReq - referralCount;
+
     return (
         <div className="space-y-12">
             <header className="max-w-3xl">
@@ -25,15 +62,15 @@ export default function ReferralsPage() {
                     <div>
                         <div className="text-sm font-mono text-gray-500 uppercase tracking-widest mb-2">Total Activation Count</div>
                         <div className="text-7xl font-black text-white tabular-nums tracking-tighter">
-                            {REFERRAL_COUNT}
+                            {referralCount}
                         </div>
                         <div className="mt-6 flex flex-col gap-2">
                             <div className="flex justify-between text-xs font-mono text-gray-400">
-                                <span>CURRENT TIER: PERFORMANCE BOOST</span>
-                                <span>NEXT: ACCESS UPGRADE (3 LEFT)</span>
+                                <span>CURRENT TIER: {referralCount >= 25 ? 'ELITE TRACK' : referralCount >= 15 ? 'ACCESS UPGRADE' : referralCount >= 10 ? 'PERFORMANCE BOOST' : 'STARTER'}</span>
+                                <span>NEXT: {remaining > 0 ? `${remaining} LEFT` : 'MAX TIER'}</span>
                             </div>
                             <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
-                                <div className="h-full bg-gradient-to-r from-orange-600 to-amber-500 w-[60%]" />
+                                <div className="h-full bg-gradient-to-r from-orange-600 to-amber-500" style={{ width: `${progressPercent}%` }} />
                             </div>
                         </div>
                     </div>
@@ -42,9 +79,12 @@ export default function ReferralsPage() {
                         <div className="text-xs text-gray-400 mb-4 uppercase font-bold">Your Unique Invite Link</div>
                         <div className="flex gap-4">
                             <div className="flex-1 bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-gray-300 font-mono text-sm truncate">
-                                shivkara.com/invite/student-882
+                                {inviteLink}
                             </div>
-                            <button className="px-4 py-3 bg-white text-black rounded-lg font-bold hover:bg-gray-200 transition-colors flex items-center justify-center">
+                            <button
+                                onClick={() => navigator.clipboard.writeText(inviteLink)}
+                                className="px-4 py-3 bg-white text-black rounded-lg font-bold hover:bg-gray-200 transition-colors flex items-center justify-center"
+                            >
                                 <Copy size={16} />
                             </button>
                         </div>
@@ -66,14 +106,14 @@ export default function ReferralsPage() {
                     level="01"
                     title="Performance Boost"
                     req="10 Referrals"
-                    unlocked={REFERRAL_COUNT >= 10}
+                    unlocked={referralCount >= 10}
                     features={["₹500 Fee Reduction", "Priority Evaluation"]}
                 />
                 <TierCard
                     level="02"
                     title="Access Upgrade"
                     req="15 Referrals"
-                    unlocked={REFERRAL_COUNT >= 15}
+                    unlocked={referralCount >= 15}
                     features={["100% Fee Waived", "Admin Dashboard Access"]}
                     highlight
                 />
@@ -81,7 +121,7 @@ export default function ReferralsPage() {
                     level="03"
                     title="Elite Track"
                     req="25 Referrals"
-                    unlocked={REFERRAL_COUNT >= 25}
+                    unlocked={referralCount >= 25}
                     features={["Paid Project Role", "Shivkara Swag Kit"]}
                 />
             </div>
@@ -109,3 +149,4 @@ const TierCard = ({ level, title, req, unlocked, features, highlight }: any) => 
         </ul>
     </GlassCard>
 )
+

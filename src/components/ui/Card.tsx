@@ -8,13 +8,21 @@ const Card = React.forwardRef<
     <div
         ref={ref}
         className={cn(
-            "rounded-xl border border-white/[0.08] bg-white/[0.02] text-card-foreground shadow-2xl backdrop-blur-md relative overflow-hidden transition-all duration-300 hover:border-white/[0.12] hover:bg-white/[0.04]",
+            "rounded-xl border border-white/[0.1] bg-[#0A0A0A]/40 text-card-foreground shadow-2xl backdrop-blur-xl relative overflow-hidden transition-all duration-300 hover:border-[#F24E1E]/40 hover:bg-[#F24E1E]/[0.02] group/card",
             className
         )}
         {...props}
     >
-        {/* Subtle Inner Highlight for Depth */}
-        <div className="absolute inset-0 bg-gradient-to-br from-white/[0.05] to-transparent opacity-100 pointer-events-none" />
+        {/* Industrial Shine Effect */}
+        <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-transparent to-transparent opacity-100 pointer-events-none" />
+        <div className="absolute -inset-[1px] rounded-xl bg-gradient-to-b from-white/[0.1] to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 pointer-events-none" />
+
+        {/* HUD Corner Accents */}
+        <div className="absolute top-0 left-0 w-2 h-2 border-l border-t border-white/20 rounded-tl-sm group-hover/card:border-[#F24E1E] transition-colors" />
+        <div className="absolute top-0 right-0 w-2 h-2 border-r border-t border-white/20 rounded-tr-sm group-hover/card:border-[#F24E1E] transition-colors" />
+        <div className="absolute bottom-0 left-0 w-2 h-2 border-l border-b border-white/20 rounded-bl-sm group-hover/card:border-[#F24E1E] transition-colors" />
+        <div className="absolute bottom-0 right-0 w-2 h-2 border-r border-b border-white/20 rounded-br-sm group-hover/card:border-[#F24E1E] transition-colors" />
+
         <div className="relative z-10">{props.children}</div>
     </div>
 ))

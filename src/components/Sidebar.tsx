@@ -1,72 +1,151 @@
 "use client";
 
+import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import {
     LayoutDashboard,
-    CheckSquare,
+    Radio,
     BookOpen,
-    BarChart2,
-    Settings
+    ShieldCheck,
+    Award,
+    ScanFace,
+    Share2,
+    LogOut
 } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 const navItems = [
-    { name: "Overview", icon: LayoutDashboard, href: "/dashboard" },
-    { name: "Assignments", icon: CheckSquare, href: "/dashboard/assignments" },
-    { name: "Resources", icon: BookOpen, href: "/dashboard/resources" },
-    { name: "Performance", icon: BarChart2, href: "/dashboard/performance" },
+    { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
+    { name: "Sessions", href: "/dashboard/sessions", icon: Radio },
+    { name: "Assignments", href: "/dashboard/assignments", icon: BookOpen },
+    { name: "Attendance", href: "/dashboard/attendance", icon: ShieldCheck },
+    { name: "Certificates", href: "/dashboard/certificates", icon: Award },
+    { name: "Referrals", href: "/dashboard/referrals", icon: Share2 },
+    { name: "Profile", href: "/dashboard/profile", icon: ScanFace },
 ];
 
-export default function Sidebar() {
+interface SidebarProps {
+    isMobile?: boolean;
+    onClose?: () => void;
+}
+
+export default function Sidebar({ isMobile = false, onClose }: SidebarProps) {
     const pathname = usePathname();
+    const [hoveredPath, setHoveredPath] = useState<string | null>(null);
+    const { signOut } = useAuth();
 
     return (
-        <div className="w-64 h-screen border-r border-white/[0.08] bg-[#020204]/80 backdrop-blur-xl flex flex-col fixed left-0 top-0 z-50">
-            {/* Logo Area */}
-            <div className="p-6 border-b border-white/[0.08]">
-                <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold shadow-lg shadow-indigo-500/20">S</div>
-                    <span className="font-semibold text-white tracking-tight">Shivkara</span>
+        <div className={cn(
+            "h-full flex flex-col bg-[#050505]/80 backdrop-blur-xl border-r border-white/10",
+            isMobile ? "w-full border-none" : "w-64 fixed left-0 top-0 z-50 border-r"
+        )}>
+
+            {/* Logo Area - Hide on mobile if rendered inside layout header, but show if inside drawer */}
+            {/* For consistency, we'll keep it simple: Hide in desktop mode (since layout might handle it?) 
+                Wait, keeping it consistent. The layout handles desktop positioning. 
+                We'll hide logo in mobile drawer mode since header has it? 
+                Actually nice to have it in drawer too. */}
+            <div className="p-8 pb-10">
+                <div className="flex items-center gap-2 group cursor-pointer">
+                    <span className="text-2xl font-black text-white tracking-tighter transition-transform group-hover:scale-105">
+                        SHIVKARA<span className="text-[#F24E1E]">.</span>
+                    </span>
                 </div>
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 p-4 space-y-1">
+            <nav className="flex-1 px-4 space-y-2">
                 {navItems.map((item) => {
                     const isActive = pathname === item.href;
+                    const Icon = item.icon;
+
                     return (
                         <Link
                             key={item.href}
                             href={item.href}
+                            onClick={onClose}
+                            onMouseEnter={() => setHoveredPath(item.href)}
+                            onMouseLeave={() => setHoveredPath(null)}
                             className={cn(
-                                "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 group relative overflow-hidden",
-                                isActive
-                                    ? "text-white bg-white/[0.08]"
-                                    : "text-zinc-400 hover:text-white hover:bg-white/[0.04]"
+                                "relative flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-300",
+                                isActive ? "text-white" : "text-zinc-500 hover:text-zinc-300"
                             )}
                         >
+                            {/* Active/Hover Background */}
+                            <AnimatePresence>
+                                {isActive && (
+                                    <motion.div
+                                        layoutId="activeSidebar"
+                                        className="absolute inset-0 bg-white/5 border border-white/10 rounded-lg"
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0 }}
+                                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                    />
+                                )}
+                                {hoveredPath === item.href && !isActive && (
+                                    <motion.div
+                                        layoutId="hoverSidebar"
+                                        className="absolute inset-0 bg-white/[0.02] rounded-lg"
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0 }}
+                                        transition={{ duration: 0.2 }}
+                                    />
+                                )}
+                            </AnimatePresence>
+
+                            {/* Active Indicator Line */}
                             {isActive && (
-                                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-4 bg-indigo-500 rounded-r-full shadow-[0_0_8px_rgba(99,102,241,0.5)]"></div>
+                                <motion.div
+                                    layoutId="activeIndicator"
+                                    className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-[2px] bg-[#F24E1E] shadow-[0_0_10px_#F24E1E] rounded-r-full"
+                                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                />
                             )}
-                            <item.icon size={18} className={cn("transition-colors", isActive ? "text-indigo-400" : "text-zinc-500 group-hover:text-zinc-300")} />
-                            {item.name}
+
+                            {/* Icon & Text */}
+                            <div className="relative z-10 flex items-center gap-3">
+                                <Icon
+                                    size={18}
+                                    className={cn(
+                                        "transition-colors duration-300",
+                                        isActive ? "text-[#F24E1E]" : "text-zinc-500 group-hover:text-zinc-300"
+                                    )}
+                                />
+                                <span>{item.name}</span>
+                            </div>
+
+                            {/* Active Glow Effect */}
+                            {isActive && (
+                                <div className="absolute inset-0 bg-gradient-to-r from-[#F24E1E]/5 to-transparent rounded-lg opacity-50" />
+                            )}
                         </Link>
-                    )
+                    );
                 })}
             </nav>
 
-            {/* Footer / User Profile */}
-            <div className="p-4 border-t border-white/[0.08] bg-black/20">
-                <div className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/[0.05] cursor-pointer transition-colors group">
-                    <div className="w-8 h-8 rounded-full bg-zinc-800 border border-white/10 flex items-center justify-center text-xs font-medium text-white group-hover:border-indigo-500/50 transition-colors">
-                        VG
+            {/* Footer / Status */}
+            <div className="p-8 space-y-6">
+                <button
+                    onClick={() => signOut()}
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-zinc-500 hover:text-white hover:bg-white/5 transition-colors group"
+                >
+                    <LogOut size={18} className="group-hover:text-red-500 transition-colors" />
+                    <span>Sign Out</span>
+                </button>
+
+                <div>
+                    <div className="flex items-center gap-2 text-[10px] text-zinc-600 font-mono uppercase tracking-widest">
+                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        System Online
                     </div>
-                    <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-white truncate group-hover:text-indigo-300 transition-colors">Vansh Gehlot</p>
-                        <p className="text-xs text-zinc-500 truncate">Student Account</p>
+                    <div className="mt-2 text-[10px] text-zinc-700 font-mono">
+                        v2.0.5 <span className="text-zinc-800">/ SHIVKARA</span>
                     </div>
-                    <Settings size={14} className="text-zinc-600 group-hover:text-white transition-colors" />
                 </div>
             </div>
         </div>

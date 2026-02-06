@@ -1,7 +1,12 @@
+"use client";
+
 import { Inter } from "next/font/google";
 import Sidebar from "@/components/Sidebar";
 import { Toaster } from "@/components/ui/toaster";
-import { Search, Bell } from "lucide-react";
+import { BackgroundEffects } from "@/components/ui/BackgroundEffects";
+import { useState } from "react";
+import { Menu, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -10,40 +15,67 @@ export default function DashboardLayout({
 }: {
     children: React.ReactNode;
 }) {
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
     return (
-        <div className={`min-h-screen bg-[#020204] text-white flex ${inter.className}`}>
+        <div className="min-h-screen relative font-sans text-zinc-100 selection:bg-white/20">
+            <BackgroundEffects />
 
-            {/* Sidebar Navigation */}
-            <Sidebar />
-
-            {/* Main Content Area */}
-            <main className="flex-1 ml-64 min-h-screen relative">
-                {/* Top Header */}
-                <header className="h-16 border-b border-white/[0.08] bg-[#020204]/80 backdrop-blur-md sticky top-0 z-40 flex items-center justify-between px-8">
-                    <div className="text-sm font-medium text-zinc-400">Dashboard / <span className="text-white">Overview</span></div>
-
-                    <div className="flex items-center gap-4">
-                        <div className="relative group">
-                            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 group-hover:text-zinc-300 transition-colors" />
-                            <input
-                                type="text"
-                                placeholder="Search..."
-                                className="h-9 w-64 rounded-full bg-white/[0.05] border border-white/[0.05] pl-9 pr-4 text-xs text-white focus:outline-none focus:bg-white/[0.1] focus:border-white/[0.1] transition-all"
-                            />
-                        </div>
-                        <button className="w-8 h-8 rounded-full bg-white/[0.05] flex items-center justify-center hover:bg-white/[0.1] transition-colors relative">
-                            <Bell size={14} className="text-zinc-400" />
-                            <span className="absolute top-2 right-2.5 w-1.5 h-1.5 bg-indigo-500 rounded-full border border-black"></span>
-                        </button>
-                    </div>
-                </header>
-
-                <div className="max-w-[1200px] mx-auto p-8 md:p-12 relative z-10">
-                    {children}
+            {/* Mobile Header */}
+            <div className="lg:hidden fixed top-0 left-0 right-0 z-50 p-4 flex justify-between items-center bg-[#050505]/80 backdrop-blur-xl border-b border-white/10">
+                <div className="flex items-center gap-2">
+                    <span className="text-xl font-black text-white tracking-tighter">
+                        SHIVKARA<span className="text-[#F24E1E]">.</span>
+                    </span>
                 </div>
-            </main>
+                <button
+                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                    className="p-2 rounded-lg border border-white/10 hover:bg-white/5 active:scale-95 transition-all text-white"
+                >
+                    {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+                </button>
+            </div>
 
-            <Toaster />
+            <div className="flex">
+
+                {/* Desktop Sidebar */}
+                <div className="hidden lg:block w-64 fixed left-0 top-0 h-screen z-50">
+                    <Sidebar />
+                </div>
+
+                {/* Mobile Sidebar Overlay */}
+                <AnimatePresence>
+                    {isMobileMenuOpen && (
+                        <>
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                onClick={() => setIsMobileMenuOpen(false)}
+                                className="fixed inset-0 bg-black/80 backdrop-blur-sm z-40 lg:hidden"
+                            />
+                            <motion.div
+                                initial={{ x: "-100%" }}
+                                animate={{ x: 0 }}
+                                exit={{ x: "-100%" }}
+                                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                className="fixed left-0 top-16 bottom-0 w-64 z-50 lg:hidden border-r border-white/10 bg-[#050505]"
+                            >
+                                <Sidebar isMobile onClose={() => setIsMobileMenuOpen(false)} />
+                            </motion.div>
+                        </>
+                    )}
+                </AnimatePresence>
+
+                {/* Main Content Area */}
+                <main className="flex-1 w-full lg:ml-64 min-h-screen relative bg-transparent pt-20 lg:pt-0">
+                    <div className="max-w-[1400px] mx-auto p-4 lg:p-12 relative z-10 w-full overflow-x-hidden">
+                        {children}
+                    </div>
+                </main>
+
+                <Toaster />
+            </div>
         </div>
     );
 }

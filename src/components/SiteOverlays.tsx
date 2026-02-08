@@ -4,7 +4,6 @@ import { usePathname } from "next/navigation";
 import dynamic from 'next/dynamic';
 
 // Dynamically import components to reduce initial bundle size
-const LeadPopup = dynamic(() => import("@/components/LeadPopup"), { ssr: false });
 const Preloader = dynamic(() => import("@/components/Preloader"), { ssr: false });
 const ScrollProgress = dynamic(() => import("@/components/ScrollProgress"), { ssr: false });
 const Grain = dynamic(() => import("@/components/Grain"), { ssr: false });
@@ -24,8 +23,6 @@ export default function SiteOverlays() {
             <Preloader />
             <Grain />
             <ScrollProgress />
-            <LeadPopup />
         </>
     );
 }
-

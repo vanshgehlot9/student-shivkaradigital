@@ -9,6 +9,8 @@ import { useAuth } from "@/context/AuthContext";
 import { db } from "@/lib/firebase";
 import { collection, addDoc, Timestamp, query, where, getDocs, limit } from "firebase/firestore";
 
+import { AttendanceCalendar, AttendanceDay } from "@/components/attendance/AttendanceCalendar";
+
 // --- Components ---
 
 const ProgressRing = ({ percentage }: { percentage: number }) => {
@@ -70,15 +72,16 @@ const ProgressRing = ({ percentage }: { percentage: number }) => {
     );
 };
 
-interface AttendanceDay {
-    date: Date;
-    isAbsent: boolean;
-}
+export default function AttendancePage() {
+    const [stats, setStats] = useState({
+        present: 0,
+        absent: 0,
+        late: 0,
+        total: 0,
+        percentage: 0
+    });
 
-const HeatmapGrid = () => {
     const [attendanceData, setAttendanceData] = useState<AttendanceDay[]>([]);
-    const weeks = 18;
-    const days = 5;
     const { user } = useAuth();
 
     useEffect(() => {
@@ -90,8 +93,8 @@ const HeatmapGrid = () => {
 
                 if (stats.length > 0) {
                     setAttendanceData(stats.map((s: any) => ({
-                        date: s.date,
-                        isAbsent: s.status === 'absent'
+                        date: s.date instanceof Date ? s.date : s.date.toDate(), // Handle Firestore Timestamp
+                        status: s.status as 'present' | 'absent' | 'late'
                     })));
                 }
             } catch (error) {
@@ -103,97 +106,6 @@ const HeatmapGrid = () => {
             fetchAttendanceHistory();
         }
     }, [user]);
-
-    // Generate grid data - use actual data if available, else deterministic demo
-    const generateCellStatus = (wIndex: number, dIndex: number): boolean => {
-        if (attendanceData.length > 0) {
-            const idx = wIndex * days + dIndex;
-            return attendanceData[idx]?.isAbsent ?? false;
-        }
-        // Deterministic pseudo-randomness for demo
-        const seed = (wIndex * 31 + dIndex * 17) % 100;
-        return seed > 85;
-    };
-
-    return (
-        <div className="flex flex-col gap-4 w-full">
-            <div className="flex justify-between items-end border-b border-white/5 pb-4 mb-2">
-                <div>
-                    <h3 className="text-sm font-bold text-white uppercase tracking-widest mb-1 flex items-center gap-2">
-                        <Activity size={16} className="text-[#F24E1E]" />
-                        Participation Matrix
-                    </h3>
-                    <p className="text-xs text-zinc-500 font-mono">Real-time attendance visualization</p>
-                </div>
-
-                <div className="flex gap-4 text-[10px] text-zinc-400 font-mono uppercase tracking-wider">
-                    <span className="flex items-center gap-2">
-                        <span className="relative flex h-2 w-2">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-2 w-2 bg-[#F24E1E]"></span>
-                        </span>
-                        Critically Absent
-                    </span>
-                    <span className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-emerald-500 rounded-sm shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
-                        Present
-                    </span>
-                </div>
-            </div>
-
-            <div className="flex gap-2 overflow-x-auto no-scrollbar pb-4 justify-between">
-                {[...Array(weeks)].map((_, wIndex) => (
-                    <div key={wIndex} className="flex flex-col gap-2">
-                        {[...Array(days)].map((_, dIndex) => {
-                            const isAbsent = generateCellStatus(wIndex, dIndex);
-
-                            return (
-                                <motion.div
-                                    key={`${wIndex}-${dIndex}`}
-                                    initial={{ opacity: 0, scale: 0 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    transition={{ delay: wIndex * 0.03 + dIndex * 0.05, type: "spring" }}
-                                    className={cn(
-                                        "w-8 h-8 lg:w-10 lg:h-10 rounded md:rounded-md border transition-all duration-300 cursor-pointer relative group",
-                                        isAbsent
-                                            ? "bg-red-500/10 border-red-500/30 hover:bg-red-500/30 hover:shadow-[0_0_20px_rgba(242,78,30,0.6)]"
-                                            : "bg-emerald-500/10 border-emerald-500/20 hover:bg-emerald-500/40 hover:shadow-[0_0_15px_rgba(16,185,129,0.4)]"
-                                    )}
-                                >
-                                    {/* Inner Core */}
-                                    <div className={cn(
-                                        "absolute inset-2 rounded-sm opacity-50 transition-all group-hover:opacity-100",
-                                        isAbsent
-                                            ? "bg-[#F24E1E] animate-pulse shadow-[0_0_10px_#F24E1E]"
-                                            : "bg-emerald-500"
-                                    )} />
-
-                                    {/* Tooltip */}
-                                    <div className={cn(
-                                        "absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-3 py-1.5 rounded bg-black border text-[10px] font-bold uppercase tracking-widest whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 shadow-2xl",
-                                        isAbsent ? "border-red-500/50 text-red-500" : "border-emerald-500/50 text-emerald-500"
-                                    )}>
-                                        {isAbsent ? '! ABSENT !' : 'VERIFIED'}
-                                    </div>
-                                </motion.div>
-                            );
-                        })}
-                    </div>
-                ))}
-            </div>
-        </div>
-    );
-};
-
-export default function AttendancePage() {
-    const [stats, setStats] = useState({
-        present: 0,
-        absent: 0,
-        late: 0,
-        total: 0,
-        percentage: 0
-    });
-    const { user } = useAuth();
 
     // Auto-Seed Logic for यशवीर (Yashveer)
     useEffect(() => {
@@ -341,13 +253,13 @@ export default function AttendancePage() {
                 </div>
             </div>
 
-            {/* Main Content Grid - Full Width Heatmap */}
+            {/* Main Content Grid - Full Width Calendar */}
             <div className="bg-[#050505]/50 border border-white/10 rounded-2xl p-8 backdrop-blur-sm relative overflow-hidden group hover:border-white/20 transition-colors">
 
                 {/* Background Grid Decoration */}
                 <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] opacity-20 pointer-events-none" />
 
-                <HeatmapGrid />
+                <AttendanceCalendar attendanceData={attendanceData} />
             </div>
 
         </div>

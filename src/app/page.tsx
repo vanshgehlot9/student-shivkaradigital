@@ -36,7 +36,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-[#000000] flex font-sans text-white overflow-hidden selection:bg-[#F24E1E]">
+    <div className="min-h-dvh bg-[#000000] flex font-sans text-white selection:bg-[#F24E1E]">
 
       {/* Left: Industrial Visual Portal */}
       <div className="hidden lg:flex flex-1 relative bg-[#050505] items-center justify-center overflow-hidden">
@@ -61,7 +61,7 @@ export default function Home() {
       </div>
 
       {/* Right: Login Form */}
-      <div className="flex-1 flex items-center justify-center p-8 relative">
+      <div className="flex-1 flex items-center justify-center p-8 relative overflow-y-auto">
         {/* Background noise for depth */}
         <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-10 mix-blend-overlay"></div>
 
